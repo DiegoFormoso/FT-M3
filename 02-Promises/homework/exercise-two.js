@@ -90,9 +90,20 @@ function problemB () {
   // );
 
   // promise version
-  let promises = filenames.map( promise => promisifiedReadFile(promise).then(stanza => blue(stanza)));
+  // let promises = filenames.map( promise => promisifiedReadFile(promise).then(stanza => blue(stanza)));
+  // Promise.all(promises)
+  //   .then(() => console.log('done'));
+
+  let promises = filenames.map( promise => promisifiedReadFile(promise) );
   Promise.all(promises)
-    .then(() => console.log('done'));
+    .then(stanzas => 
+      {
+        stanzas.forEach(stanza => blue(stanza));
+        console.log('done');
+      }
+    )
+
+
 }
 
 function problemC () {
@@ -125,16 +136,24 @@ function problemC () {
   // );
 
   // promise version
-  for (let i=1, p=promisifiedReadFile(filenames[0]); i <= filenames.length; i++) {
-    p = p.then(stanza => {
-      blue(stanza);
-      if (i === filenames.length) 
-        console.log('done');
-      else 
-        return promisifiedReadFile(filenames[i]);
-    })
-  }  
+  // for (let i=1, p=promisifiedReadFile(filenames[0]); i <= filenames.length; i++) {
+  //   p = p.then(stanza => {
+  //     blue(stanza);
+  //     if (i === filenames.length) 
+  //       console.log('done');
+  //     else 
+  //       return promisifiedReadFile(filenames[i]);
+  //   })
+  // }
 
+  // Promise.each(filenames, filename => {
+  //   return promisifiedReadFile(filename).then(stanza => blue(stanza));
+  // }).then(() => consolse.log('done'));
+
+  Promise.all(filenames).then(file => {
+    file.forEach(stanza => blue(stanza));
+    console.log('done');
+  });
 }
 
 function problemD () {
@@ -171,23 +190,29 @@ function problemD () {
   // );
 
   // promise version
-  for (let i=1, p=promisifiedReadFile(filenames[0]); i <= filenames.length; i++) {
-    p = p.then(stanza => {
-      blue(stanza);
-      // if (i === filenames.length) 
-      //   console.log('done');
-      // else 
-        return promisifiedReadFile(filenames[i]);
-    })
-    if (i === filenames.length) {
-      p.catch(err => magenta(new Error(err)));
-      p.finally(() => console.log('done'));
-      // p.catch(err => {
-      //     magenta(new Error(err));
-      //     console.log('done');
-      //  });
-    }  
-  }  
+  // for (let i=1, p=promisifiedReadFile(filenames[0]); i <= filenames.length; i++) {
+  //   p = p.then(stanza => {
+  //     blue(stanza);
+  //     // if (i === filenames.length) 
+  //     //   console.log('done');
+  //     // else 
+  //       return promisifiedReadFile(filenames[i]);
+  //   })
+  //   if (i === filenames.length) {
+  //     p.catch(err => magenta(new Error(err)));
+  //     p.finally(() => console.log('done'));
+  //     // p.catch(err => {
+  //     //     magenta(new Error(err));
+  //     //     console.log('done');
+  //     //  });
+  //   }  
+  // }  
+
+  let promises = filenames.map( file => promisifiedReadFile(file) );
+  Promises.all(promises) 
+    .then(stanzas => stanzas.forEach(stanza => blue(stanza))) 
+    .catch( err => magenta(new Error(err)))
+    .finally(() => console.log('done')) ;
 }
 
 function problemE () {
@@ -200,7 +225,7 @@ function problemE () {
   var fs = require('fs');
   function promisifiedWriteFile (filename, str) {
     return new Promise(function(resolve, reject) {
-      fs.writeFile(filename, str, (err) => {
+      fs.writeFile(filename, str, 'utf8', (err) => {
         if (err) 
           reject(err);
         else 
